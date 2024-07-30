@@ -14,10 +14,12 @@
                     </div>
                 </div>
                 <div class="card-body card m-2 col-2 shadow-sm ">
+                    <router-link class="dropdown-item" to="/mirror">
                     <div class="text-center">
                         <span class="material-icons">watch_later</span>
                         <div>Espelho de Ponto</div>
                     </div>
+                </router-link>
                 </div>
                 <div class="card-body card m-2 col-2 shadow-sm ">
                     <div class="text-center">

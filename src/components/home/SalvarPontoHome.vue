@@ -12,6 +12,7 @@ import axios from 'axios';
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
+
 export default {
 
     
@@ -45,14 +46,16 @@ export default {
     },
     methods: {
         SalvarPonto: async () => {
-            const horario = format(new Date(), 'yyyy-MM-dd HH:MM:SS', { locale: ptBR })
+            const horario = format(new Date(), 'yyyy-MM-dd HH:mm:ss', { locale: ptBR })
+            //console.log(horario)
             try {
                 const response = await axios.post('/profile/set-ponto', {
                     horario: horario,
                     tipo: 'entrada'
                 });
-                this.data = response.data.data;
-                //this.$emit('att-mark',true)
+                //this.data = response.data.data;
+                console.log('Response from server:', response.data.data);
+                //this.$emit('enter');
             } catch (error) {
                 console.error(error);
             }

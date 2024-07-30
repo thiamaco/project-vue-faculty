@@ -65,6 +65,12 @@ export default {
     MonitoraAuthenticated() {
       return this.Authenticated;
     }
+  },
+  receiveEmit() {
+    alert('Hello World!');
+    this.$emit('ending');
   }
+  
 };
+
 </script>
