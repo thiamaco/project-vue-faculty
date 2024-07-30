@@ -1,6 +1,7 @@
 <template>
   <div>
-    
+    <LoaderPage v-if="!isAuthenticated" ></LoaderPage>
+
     <div v-if="isAuthenticated">
       
      <!-- <TopoInfo :dados="ProfileData" />-->
@@ -9,40 +10,44 @@
       <div class="d-flex gap-1 align-items-center justify-content-center container mt-4">
         <button class="btn btn-outline-secondary" @click="handleClick('profile')"
           :class="{ 'selected': ChangeStatus === 'profile' }">Pessoais</button>
-        <button class="btn btn-outline-secondary" @click="handleClick('contrato')"
-          :class="{ 'selected': ChangeStatus === 'contrato' }">Contratuais</button>
-        <button class="btn btn-outline-secondary" @click="handleClick('documento')"
-          :class="{ 'selected': ChangeStatus === 'documento' }">Documentos</button>
+        <button class="btn btn-outline-secondary" @click="handleClick('contract')"
+          :class="{ 'selected': ChangeStatus === 'contract' }">Contratuais</button>
+        <button class="btn btn-outline-secondary" @click="handleClick('document')"
+          :class="{ 'selected': ChangeStatus === 'document' }">Documentos</button>
       </div>
       <div v-if="ChangeStatus === 'profile'">
-        <div class="container mt-4 mb-4 card card-body col-12 shadow ">
+        <LoaderPage v-if="loading" />
+        <div v-else class="container mt-4 mb-4 card card-body col-12 shadow ">
           <ProfilePessoais :Profile="ProfileData" />
-          <TitleMessage Title='Residência'></TitleMessage>
+          <TitleMessage Title='Endereços'></TitleMessage>
           <ResidenciaDados :Residencia="ResidenciaData" />
         </div>
       </div>
-      <div v-else-if="ChangeStatus === 'contrato'">
-        <div class="container mt-4 mb-4 card card-body col-12 shadow ">
+      <div v-else-if="ChangeStatus === 'contract'">
+        <LoaderPage v-if="loading" />
+        <div v-else class="container mt-4 mb-4 card card-body col-12 shadow ">
           <ContratoInfo :Contract="ContractData" />
+          
           <TitleMessage Title='Cargo efetivo'></TitleMessage>
-          <CargoEfetivo :Cargo="OfficeData" />
+          <CargoEfetivo  v-if=OfficeData :Cargo="OfficeData" />
           <TitleMessage Title='pagamento'></TitleMessage>
-          <PaymentInfo :Payment="PaymentData" />
+          <PaymentInfo  v-if=PaymentData :Payment="PaymentData" />
         </div>
       </div>
-      <div v-else-if="ChangeStatus === 'documento'">
-        <div class="container mt-4 mb-4 card card-body col-12 shadow ">
+      <div v-else-if="ChangeStatus === 'document'">
+        <LoaderPage v-if="loading" />
+        <div v-else class="container mt-4 mb-4 card card-body col-12 shadow ">
           <div><p>CPF {{ Documentos.CPF }}</p></div>
           <TitleMessage Title='IDENTIDADE'></TitleMessage>
           <IndentidadeDoc :Identidade="Documentos.Identidade"></IndentidadeDoc>
           <TitleMessage Title='TÍTULO DE ELEITOR'></TitleMessage>
-          <TituloDoc :Titulo="Documentos.TitleEleitor"></TituloDoc>
+          <TituloDoc :Titulo="Documentos.TituloEleitor"></TituloDoc>
           <TitleMessage Title='CERTIFICADO MILITAR'></TitleMessage>
           <CertificadoDoc :Certificado="Documentos.CertificadoMilitar" />
           <TitleMessage Title='CARTEIRA DE TRABALHO'></TitleMessage>
-          <CarteiraDoc :Carteira="Documentos.Carteira"></CarteiraDoc>
+          <CarteiraDoc :Carteira="Documentos.ContratoTrabalho"></CarteiraDoc>
           <TitleMessage Title='PIS PASEP'></TitleMessage>
-          <PisDoc :Pis="Documentos.Pis" />
+          <PisDoc :Pis="Documentos.PISPASEP" />
 
         </div>
       </div>
@@ -51,6 +56,7 @@
 </template>
 
 <script>
+import LoaderPage from '../partials/LoaderPage.vue'
 import axios from 'axios';
 import ProfilePessoais from '../perfil/PerfilPessoais.vue';
 //import TopoInfo from './perfil/TopoInfo.vue';
@@ -64,7 +70,7 @@ import CertificadoDoc from '../documentos/CertifcadoDoc.vue'
 import TituloDoc from '../documentos/TitutoDoc.vue'
 import IndentidadeDoc from '../documentos/IdentidadeDoc.vue'
 import TitleMessage from '../TitleMessage.vue'
-
+import $ from 'jquery';
   axios.defaults.withCredentials = true;
   axios.defaults.baseURL = 'http://localhost:3000';
 
@@ -81,7 +87,8 @@ export default {
     CertificadoDoc,
     TituloDoc,
     IndentidadeDoc,
-    TitleMessage
+    TitleMessage,
+    LoaderPage
   },
   data() {
     return {
@@ -93,7 +100,8 @@ export default {
       OfficeData: [],
       ContractData: [],
       PaymentData: [],
-      Documentos: []
+      Documentos: [],
+      loading: false
     };
   },
     computed: {
@@ -106,7 +114,7 @@ export default {
   },
   async created() {
       try {
-        const response = await axios.get('/profile/profile', {
+        const response = await axios.get('/profile/SearchProfile', {
         });
         const { Residency, Profile } = response.data.data;
         this.ResidenciaData = Residency;
@@ -121,17 +129,20 @@ export default {
   },
   methods: {
     async handleClick(status) {
+      this.loading = true;
+      $('.container');
         try {
-          const response = await axios.get(`/profile/${status}`, {
+          const response = await axios.get(`/profile/Search${status}`, {
           });
+          this.loading = false;
           this.status = status;
 
-          if (this.status == 'contrato') {
-            const { Office, Contract, Payment } = response.data.data;
+          if (this.status == 'contract') {
+            const { Office, contract, Payment } = response.data.data;
             this.OfficeData = Office;
-            this.ContractData = Contract;
+            this.ContractData = contract;
             this.PaymentData = Payment;
-          } else if (this.status == 'documento') {
+          } else if (this.status == 'document') {
             console.log(response.data.data);
             this.Documentos = response.data.data;
           }

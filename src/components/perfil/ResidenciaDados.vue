@@ -1,15 +1,15 @@
 <template>
     
-      <div class="container  p-2 ">
-        <p >Logradouro {{ Residencia.residencia_logradouro }}</p>
-        <p >Tipo de logradouro: {{ Residencia.residencia_tipo_logradouro }}</p>
-        <p>Número {{ Residencia.residencia_numero }}</p>
-        <p>Bairro: {{ Residencia.residencia_bairro }}</p>
-        <p>Município: {{ Residencia.residencia_municipio }}</p>
-        <p>CEP: {{ Residencia.residencia_cep }}</p>
-        <p>DDD: {{ Residencia.residencia_ddd_telefone }}</p>
-        <p>Telefone Residencial: {{ Residencia.residencia_telefone }}</p>
-        <p>DDD - Telefone Celular: {{ Residencia.celular_ddd }}- {{Residencia.celular_numero}}</p>    
+      <div class="container  p-2 " v-for="(item) in Residencia" :key="item.id">
+        <p >Logradouro {{ item.logradouro }}</p>
+        <p >Tipo de logradouro: {{ item.tipo_logradouro }}</p>
+        <p>Número {{ item.numero }}</p>
+        <p>Bairro: {{ item.bairro }}</p>
+        <p>Município: {{ item.municipio }}</p>
+        <p>CEP: {{ item.cep }}</p>
+        <p>DDD: {{ item.ddd_telefone }}</p>
+        <p>Telefone Residencial: {{ item.telefone }}</p>
+        <p>DDD - Telefone Celular: {{ item.celular_ddd }}- {{item.celular_numero}}</p>    
       </div>
     </template>
     

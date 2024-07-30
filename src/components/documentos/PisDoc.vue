@@ -1,6 +1,6 @@
 <template>
     <div>
-       <p>Numero {{Pis.numero }}</p>
+       <p>Numero {{Pis }}</p>
     </div>
 </template>
 

@@ -45,9 +45,9 @@ export default {
     },
     methods: {
         SalvarPonto: async () => {
-            const horario = format(new Date(), 'yyyy-MM-dd HH:MM:SS', { locale: ptBR })
+            const horario = format(new Date(), 'yyyy-MM-dd hh:mm:ss', { locale: ptBR })
             try {
-                const response = await axios.post('/profile/set-ponto', {
+                const response = await axios.post('/profile/SavePointDay', {
                     horario: horario,
                     tipo: 'entrada'
                 });

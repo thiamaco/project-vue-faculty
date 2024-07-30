@@ -1,5 +1,7 @@
 <template>
-    <div v-if="isAuthenticated" class="container bg-dark text-white  p-5 mt-5 w-50">
+
+<LoaderPage v-if="!isAuthenticated" />
+    <div v-else-if="isAuthenticated" class="container bg-dark text-white  p-5 mt-5 w-50">
         <h2 class="text-center">Alterar senha:</h2>
         <form @submit.prevent="passwordChange" class="col-12">
             <div class="mb-3 mt-3 ">
@@ -13,13 +15,17 @@
                 <input class="form-control" v-model="confirmpassword" type="password" placeholder="Password" />
             </div>
             <div class="container d-flex gap-3 align-items-center justify-content-center">
-                <button type="submit" class="btn btn-success px-5 ">Salvar</button>
-
+                <i v-if="loading" class="  fa fa-spinner fa-spin"></i> 
+                <button v-else type="submit" class="btn btn-success px-5">
+                    
+                    
+                    Salvar</button>
+                
             </div>
 
         </form>
     </div>
-    <div v-if="!isAuthenticated">
+    <div v-else>
         <div class="alert alert-danger" role="alert">
             <h1 class="aw-error-panel__code">
                 <i class="fa  fa-lock"></i>
@@ -35,16 +41,24 @@
     </div>
 </template>
 <script>
+
+import LoaderPage from '../partials/LoaderPage.vue'
 import axios from 'axios';
+
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:3000';
 
 export default {
+
+    components:{
+        LoaderPage
+    },
     data() {
         return {
             password: '',
             confirmpassword: '',
-            IsValid: false
+            IsValid: false,
+            loading:false
         };
     },
     computed: {
@@ -54,8 +68,10 @@ export default {
     },
     async created() {
       try {
+       
         const response = await axios.post('/protected', {
         });
+        
         this.IsValid = response.data.IsValid;
         this.$emit('authenticated', true);
       } catch (error) {
@@ -66,12 +82,16 @@ export default {
   },
     methods: {
         async passwordChange() {
+
+            this.loading=true;
+
             try {
-                const response = await axios.post('/password-change', {
+                const response = await axios.put('/password-change', {
                    
                     password: this.password,
                     confirmpassword: this.confirmpassword
                 });
+                this.loading=false;
                 if (response.data.IsValid) {
                     this.$router.push('/info');
                     this.$emit('authenticated', true);
@@ -80,8 +100,17 @@ export default {
                 }
             } catch (error) {
                 console.log(error.data)
+                 this.loading=false;
             }
         }
     }
 };
 </script>
+
+
+<style>
+
+.hidden{
+    display:none
+}
+</style>
